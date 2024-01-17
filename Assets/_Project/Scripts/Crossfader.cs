@@ -5,22 +5,35 @@ using UnityEngine.UI;
 
 public class Crossfader : CustomSlider
 {
-
     [SerializeField] private CrossfaderSettings _crossfaderSettings;
-    private AudioManager audioManager;
 
-    protected override void Awake()
+    [Range(-1,1)]
+    [SerializeField] private int _defaultValue;
+
+    private AudioManager _manager;
+
+    protected override void InitDefaultSliderSettings()
     {
-        base.Awake();
-        audioManager = AudioManager.Instance;
+
+        _manager = AudioManager.Instance;
+
+        Slider.minValue = -1;
+        Slider.maxValue = 1;
+
+        Slider.value = Slider.minValue;
+
+        OnSliderValueChanged();
+
     }
 
     protected override void OnSliderValueChanged()
     {
         Debug.Log("Crossfader value changed");
-        
-        audioManager.SetMixerVolume(audioManager.MixerGroupA, _crossfaderSettings.PositiveCrossfaderCurve.Evaluate(Slider.value));
-        audioManager.SetMixerVolume(audioManager.MixerGroupB, _crossfaderSettings.NegativeAnimationCurve.Evaluate(Slider.value));
-    }
 
+        float a = _crossfaderSettings.PositiveCrossfaderCurve.Evaluate(Slider.value);
+        float b = _crossfaderSettings.NegativeAnimationCurve.Evaluate(Slider.value);
+
+        _manager.Mixer.CrossFade(a,b );
+        
+    }
 }

@@ -11,7 +11,7 @@ public class LogService : Singleton<LogService>
     /// Logs a message if "Logging" is enabled
     /// </summary>
     /// <param name="message"></param>
-    public void Log(string message)
+    public void Log(object message)
     {
         if (_enableLogs)
         {
